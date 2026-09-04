@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AccessBridge — Sign Language & Visual Assistance</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bubbles-wrap" id="bubbles">
+  <!-- large: max 60px -->
+  <div class="bubble" style="left:5%;width:58px;height:58px;opacity:0.55;animation-duration:28s;animation-delay:0s;"></div>
+  <div class="bubble" style="left:88%;width:54px;height:54px;opacity:0.50;animation-duration:32s;animation-delay:3s;"></div>
+  <div class="bubble" style="left:72%;width:50px;height:50px;opacity:0.48;animation-duration:25s;animation-delay:7s;"></div>
+  <div class="bubble" style="left:18%;width:46px;height:46px;opacity:0.45;animation-duration:30s;animation-delay:11s;"></div>
+  <!-- medium: 28–38px -->
+  <div class="bubble" style="left:35%;width:38px;height:38px;opacity:0.42;animation-duration:22s;animation-delay:2s;"></div>
+  <div class="bubble" style="left:58%;width:36px;height:36px;opacity:0.40;animation-duration:26s;animation-delay:5s;"></div>
+  <div class="bubble" style="left:80%;width:34px;height:34px;opacity:0.38;animation-duration:20s;animation-delay:9s;"></div>
+  <div class="bubble" style="left:12%;width:32px;height:32px;opacity:0.40;animation-duration:24s;animation-delay:14s;"></div>
+  <div class="bubble" style="left:48%;width:30px;height:30px;opacity:0.36;animation-duration:18s;animation-delay:6s;"></div>
+  <!-- small: 12–22px -->
+  <div class="bubble small" style="left:25%;width:22px;height:22px;opacity:0.50;animation-duration:16s;animation-delay:1s;"></div>
+  <div class="bubble small" style="left:65%;width:20px;height:20px;opacity:0.46;animation-duration:14s;animation-delay:4s;"></div>
+  <div class="bubble small" style="left:42%;width:18px;height:18px;opacity:0.44;animation-duration:12s;animation-delay:8s;"></div>
+  <div class="bubble small" style="left:92%;width:16px;height:16px;opacity:0.40;animation-duration:15s;animation-delay:10s;"></div>
+  <div class="bubble small" style="left:8%;width:14px;height:14px;opacity:0.38;animation-duration:13s;animation-delay:3s;"></div>
+  <div class="bubble small" style="left:55%;width:12px;height:12px;opacity:0.35;animation-duration:11s;animation-delay:6s;"></div>
+</div>
+<div class="blob-top-right" aria-hidden="true"></div>
+<div class="blob-bottom-left" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">✋ AccessBridge</div>
+  <div class="nav-links" id="nav-links">
+    <a href="#hero" onclick="goHome();return false;">🏠 Home</a>
+    <a href="#blind" id="nl-blind" class="nav-blind-only" style="display:none">Blind Assist</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="nav-auth-area">
+      <button class="nav-auth-btn" id="nav-auth-btn" onclick="openAuth()">Login / Sign up</button>
+    </div>
+    <button class="dm-btn" id="dm-btn" onclick="toggleDark()" aria-label="Toggle dark mode">
+      <span class="dm-track"><span class="dm-thumb"></span></span>
+      <span class="dm-icon" id="dm-icon">🌙</span>
+    </button>
+    <button class="three-dots-btn" id="three-dots-btn" onclick="toggleMenuDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MODE BACK BUTTON (left corner) -->
+<button id="mode-back" class="mode-back" style="display:none" onclick="goHome()">← Back</button>
+
+<!-- MENU DRAWER -->
+<div class="team-drawer-overlay" id="menu-drawer-overlay" onclick="closeMenuDrawer()"></div>
+<div class="team-drawer" id="menu-drawer">
+  <div class="td-header">
+    <div class="nav-logo" style="-webkit-text-fill-color:unset;background:linear-gradient(135deg,#7c3aed,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">✋ AccessBridge</div>
+    <button class="td-close" onclick="closeMenuDrawer()">✕</button>
+  </div>
+  <nav class="drawer-nav">
+    <a class="drawer-link" href="#hero" onclick="closeMenuDrawer();goHome();return false;">
+      <span class="dl-icon">🏠</span><span>Home</span>
+    </a>
+    <a class="drawer-link" id="dm-about" href="#about" style="display:none" onclick="closeMenuDrawer();smoothScroll('about');return false;">
+      <span class="dl-icon">ℹ️</span><span>About</span>
+    </a>
+    <a class="drawer-link" id="dm-how" href="#how" style="display:none" onclick="closeMenuDrawer();smoothScroll('how');return false;">
+      <span class="dl-icon">⚙️</span><span>How it works</span>
+    </a>
+    <div class="drawer-divider"></div>
+    <a class="drawer-link" href="#" onclick="closeMenuDrawer();openHelp();return false;">
+      <span class="dl-icon">❓</span><span>Help</span>
+    </a>
+    <a class="drawer-link" href="#" onclick="closeMenuDrawer();openSettings();return false;">
+      <span class="dl-icon">⚙️</span><span>Settings</span>
+    </a>
+    <div class="drawer-divider"></div>
+    <div class="drawer-team-label">The Builders</div>
+    <div class="team-g" id="team-grid"></div>
+  </nav>
+</div>
+
+<!-- HELP MODAL -->
+<div class="modal-overlay" id="help-modal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <div class="modal-head"><span>❓ Help</span><button onclick="document.getElementById('help-modal').style.display='none'">✕</button></div>
+    <div class="modal-body">
+      <p><strong>Sign User Mode</strong> — Show hand gestures to the camera. The AI detects your ASL letters in real-time and speaks them aloud.</p>
+      <p><strong>Blind User Mode</strong> — Tap any tool, point the camera at an object, and hear the result instantly.</p>
+      <p><strong>ASL Guide</strong> — Learn all 26 hand gestures with images and descriptions.</p>
+      <p style="margin-top:16px;color:var(--muted);font-size:13px">Make sure your Python backend is running: <code>python app.py</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <div class="modal-head"><span>⚙️ Settings</span><button onclick="document.getElementById('settings-modal').style.display='none'">✕</button></div>
+    <div class="modal-body">
+      <div class="setting-row">
+        <span>Dark mode</span>
+        <button class="dm-btn" onclick="toggleDark()" style="pointer-events:auto">
+          <span class="dm-track"><span class="dm-thumb"></span></span>
+          <span class="dm-icon">🌙</span>
+        </button>
+      </div>
+      <div class="setting-row">
+        <span>Backend URL</span>
+        <input id="settings-api-url" value="http://127.0.0.1:5000" style="font-family:monospace;font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--soft);color:var(--text);outline:none;width:200px">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <div class="modal-head"><span id="auth-modal-title">👤 Login</span><button onclick="document.getElementById('auth-modal').style.display='none'">✕</button></div>
+    <div class="modal-body">
+      <p id="auth-error" style="color:#f43f5e;font-size:13px;margin-bottom:10px;display:none"></p>
+
+      <div id="auth-login-view">
+        <input id="login-email" placeholder="Email" type="email" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--soft);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;display:block">
+        <input id="login-password" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--soft);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:16px;display:block">
+        <button class="btn-primary" style="width:100%;justify-content:center" onclick="handleLogin()">Login</button>
+        <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--muted)">Don't have an account? <a href="#" onclick="switchAuthView('signup');return false;" style="color:var(--lav2);font-weight:700">Sign up</a></p>
+      </div>
+
+      <div id="auth-signup-view" style="display:none">
+        <input id="signup-email" placeholder="Email" type="email" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--soft);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;display:block">
+        <input id="signup-password" type="password" placeholder="Password (min 6 characters)" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--soft);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;display:block">
+        <input id="signup-password2" type="password" placeholder="Confirm password" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--soft);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:16px;display:block">
+        <button class="btn-primary" style="width:100%;justify-content:center" onclick="handleSignup()">Create account</button>
+        <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--muted)">Already have an account? <a href="#" onclick="switchAuthView('login');return false;" style="color:var(--lav2);font-weight:700">Login</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO — always visible, mode selection only
+     ═══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+  <div class="hero-edge" aria-hidden="true"></div>
+
+  <h1>
+    <span class="h1-line1">Enhancing Accessibility</span>
+    <span class="h1-line2">Sign Language Recognition</span>
+    <span class="h1-line3">& Visual Assistance</span>
+  </h1>
+  <p class="hero-sub">A real-time AI system bridging communication for deaf, mute, and visually impaired individuals — using computer vision, deep learning, and voice technology.</p>
+
+  <!-- MODE CHOOSER -->
+  <div class="hero-mode-wrap">
+    <div class="hero-mode-label">— Choose your mode —</div>
+    <div class="hero-mode-btns">
+      <button class="hero-mode-btn" id="mode-sign-btn" onclick="setAppMode('sign')">
+        <span class="hmb-icon">🤟</span>
+        <span class="hmb-text">
+          <span class="hmb-title">Sign User</span>
+          <span class="hmb-sub">Real-time detection &amp; ASL guide</span>
+        </span>
+        <span class="hmb-check">✓</span>
+      </button>
+      <button class="hero-mode-btn" id="mode-blind-btn" onclick="setAppMode('blind')">
+        <span class="hmb-icon">👁️</span>
+        <span class="hmb-text">
+          <span class="hmb-title">Blind User</span>
+          <span class="hmb-sub">Vision to voice helpers</span>
+        </span>
+        <span class="hmb-check">✓</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-card"><div class="stat-icon">🤚</div><div class="stat-info"><span class="stat-n">26+</span><span class="stat-l">Gestures</span><span class="stat-sub">Supported</span></div></div>
+    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-info"><span class="stat-n">96%</span><span class="stat-l">Accuracy</span><span class="stat-sub">Real-time Performance</span></div></div>
+    <div class="stat-card"><div class="stat-icon">🔵</div><div class="stat-info"><span class="stat-n">21</span><span class="stat-l">Landmarks</span><span class="stat-sub">Per Hand</span></div></div>
+    <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-info"><span class="stat-n">&lt;100ms</span><span class="stat-l">Response</span><span class="stat-sub">Lightning Fast</span></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     SIGN USER SECTIONS
+     ═══════════════════════ -->
+
+<!-- ABOUT — sign only -->
+<section id="about" class="section bg-soft mode-section sign-section" style="display:none">
+  <div class="section-inner">
+    <div class="s-label">About the project</div>
+    <h2>Who does this <em>help?</em></h2>
+    <div class="cards-3">
+      <div class="g-card"><div class="g-icon">🤟</div><h3>Deaf &amp; mute users</h3><p>Show a hand gesture to the camera. MediaPipe detects your landmarks, the CNN model recognizes the sign, and pyttsx3 speaks it out loud instantly.</p></div>
+      <div class="g-card"><div class="g-icon">🎙️</div><h3>Blind users</h3><p>Speak naturally into the microphone. SpeechRecognition converts your voice to text in real-time, displayed clearly on screen for others to read.</p></div>
+      <div class="g-card"><div class="g-icon">🔁</div><h3>Two-way communication</h3><p>Switch between sign-to-voice and voice-to-text with one tap — enabling complete conversations for everyone.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS — sign only -->
+<section id="how" class="section mode-section sign-section" style="display:none">
+  <div class="section-inner">
+    <div class="s-label">Technology</div>
+    <h2>How it <em>works</em></h2>
+    <p class="s-sub">Five modules working together — gesture to speech in under 100ms.</p>
+    <div class="steps-row">
+      <div class="step-item"><div class="step-num-circle">01</div><div class="step-tech">OpenCV</div><h3>Camera capture</h3><p>Opens webcam at 30fps, passes each frame to MediaPipe.</p></div>
+      <div class="step-item"><div class="step-num-circle">02</div><div class="step-tech">MediaPipe</div><h3>Hand detection</h3><p>Maps 21 landmark points as x, y, z coordinates.</p></div>
+      <div class="step-item"><div class="step-num-circle">03</div><div class="step-tech">TensorFlow</div><h3>Recognition</h3><p>CNN model identifies gesture with confidence score.</p></div>
+      <div class="step-item"><div class="step-num-circle">04</div><div class="step-tech">pyttsx3</div><h3>Speech output</h3><p>Converts predicted text to natural voice instantly.</p></div>
+      <div class="step-item"><div class="step-num-circle">05</div><div class="step-tech">SpeechRecog</div><h3>Voice to text</h3><p>Mic input transcribed in real-time on screen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEMO — sign only -->
+<section id="demo" class="section bg-soft mode-section sign-section" style="display:none">
+  <div class="section-inner">
+    <div class="s-label">Sign Recognition</div>
+    <h2>Real-time <em>detection</em></h2>
+    <p class="s-sub">Real-time ASL alphabet recognition using MediaPipe hand tracking.<br>
+    <span id="backend-status" class="b-pill">Checking backend...</span></p>
+
+    <div class="demo-feature-header" id="demo-feature-header">
+      <div class="demo-feature-label" id="demo-feature-label">Live Recognition</div>
+      <p class="demo-feature-desc" id="demo-feature-desc">Click Start to activate camera and hand tracking.</p>
+    </div>
+    <div class="demo-actions">
+      <input id="word-display" type="text" readonly placeholder="Build a word from detected letters">
+      <div class="demo-action-buttons">
+        <button class="action-btn" onclick="addLetter()">Add Letter</button>
+        <button class="action-btn" onclick="addSpace()">Space</button>
+        <button class="action-btn" onclick="clearWord()">Clear</button>
+        <button class="action-btn" onclick="speakWord()">Speak</button>
+        <button class="action-btn" onclick="saveSnapshot()">Save Snapshot</button>
+      </div>
+    </div>
+
+    <div class="demo-top">
+      <div class="demo-cam-col">
+        <div class="cam-box">
+          <img id="cam-feed" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:20px;" alt="feed">
+          <div id="cam-placeholder" class="cam-ph">
+            <div class="cam-ph-icon">📷</div>
+            <p>Click Start to activate camera and hand tracking</p>
+          </div>
+        </div>
+        <button class="cam-start-btn" id="start-btn" onclick="startCamera()">📷 Start Camera</button>
+        <button class="cam-stop-btn"  id="stop-btn"  onclick="stopCamera()" style="display:none">⏹ Stop Camera</button>
+      </div>
+
+        <div class="demo-right-col">
+        <div class="det-card">
+          <div class="det-label">DETECTED LETTER</div>
+          <div id="big-letter" class="big-l">—</div>
+          <div class="c-track" style="margin-top:12px"><div id="conf-fill" class="c-fill"></div></div>
+          <div id="conf-text" class="conf-text">—</div>
+          <div class="det-status-row">
+            <div class="dot" id="status-dot"></div>
+            <span id="status-text">No hand detected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASL GUIDE — sign only -->
+<section id="asl" class="section mode-section sign-section" style="display:none">
+  <div class="section-inner">
+    <div class="asl-header">
+      <div>
+        <div class="s-label">Learn Sign Language</div>
+        <h2>ASL alphabet <em>guide</em></h2>
+        <p class="s-sub">Learn the hand gestures for every letter A through Z.</p>
+      </div>
+    </div>
+    <div class="asl-search-row">
+      <span class="asl-search-icon">🔍</span>
+      <input class="asl-search" id="asl-search" type="text" placeholder="Search letters..." oninput="filterASL(this.value)">
+    </div>
+    <div class="asl-grid" id="asl-grid"></div>
+  </div>
+</section>
+
+<!-- FEATURE CARDS — sign only -->
+<section id="features" class="section bg-soft mode-section sign-section" style="display:none">
+  <div class="section-inner">
+    <div class="s-label">Key capabilities</div>
+    <h2>Powerful features for <em>sign mode</em></h2>
+    <p class="s-sub">A responsive suite of tools designed to make ASL recognition faster, smarter, and more engaging.</p>
+    <div class="feature-grid">
+      <article class="feature-card" data-feature="live" onclick="openSignFeature('live')">
+        <div class="feature-emoji">📹</div>
+        <h3>Live Recognition</h3>
+        <p>Detect ASL hand gestures in real time for instant feedback and seamless communication.</p>
+      </article>
+      <article class="feature-card" data-feature="word" onclick="openSignFeature('word')">
+        <div class="feature-emoji">✍️</div>
+        <h3>Live Word Formation</h3>
+        <p>Automatically combine detected letters into words so your message appears fluid and natural.</p>
+      </article>
+      <article class="feature-card" data-feature="tts" onclick="openSignFeature('tts')">
+        <div class="feature-emoji">🔊</div>
+        <h3>Text-to-Speech</h3>
+        <p>Convert recognized text into clear, natural speech to bridge conversations instantly.</p>
+      </article>
+      <article class="feature-card" data-feature="guide" onclick="openSignFeature('guide')">
+        <div class="feature-emoji">🔤</div>
+        <h3>ASL Alphabet Guide</h3>
+        <p>Interactive learning support for every ASL letter, so users can improve recognition and recall.</p>
+      </article>
+      <article class="feature-card" data-feature="snapshot" onclick="openSignFeature('snapshot')">
+        <div class="feature-emoji">📸</div>
+        <h3>Snapshot &amp; Save</h3>
+        <p>Capture recognition results and preserve meaningful moments for later review.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════
+     BLIND USER SECTION
+     ═══════════════════════ -->
+<section id="blind" class="section bg-soft mode-section blind-section" style="display:none">
+  <div class="section-inner">
+    <div class="s-label">Blind Assistance</div>
+    <h2>Vision to voice <em>helpers</em></h2>
+    <p class="s-sub">Point your camera at any object — tap a tool button and hear the result instantly. No uploads needed, everything is hands-free.</p>
+
+    <div class="blind-layout">
+      <div class="blind-cam-col">
+        <div class="blind-cam-box" id="blind-cam-box">
+          <img id="blind-video" alt="live feed" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:20px 20px 0 0;">
+          <div class="blind-cam-ph" id="blind-cam-ph">
+            <div class="blind-cam-ph-icon">📷</div>
+            <p>Tap a tool button to start the camera</p>
+          </div>
+          <div class="blind-snap-flash" id="blind-snap-flash"></div>
+          <div class="blind-live-badge" id="blind-live-badge" style="display:none">
+            <span class="blind-live-dot"></span> LIVE
+          </div>
+        </div>
+        <button class="blind-capture-btn" id="blind-capture-btn" onclick="captureAndAnalyse()" style="display:none">
+          🔄 Re-capture &amp; Analyse
+        </button>
+        <div class="blind-cam-hint" id="blind-cam-hint" style="display:none">
+          Backend camera captures automatically — point it at the object
+        </div>
+      </div>
+
+      <div class="blind-right-col">
+        <div class="blind-tools-label">Choose a tool</div>
+        <div class="blind-tools" id="blind-tools">
+          <button class="tool-btn" onclick="selectTool('medicine', this)">💊 Medicine Reader</button>
+          <button class="tool-btn" onclick="selectTool('color', this)">🎨 Color Detector</button>
+          <button class="tool-btn" onclick="selectTool('currency', this)">💸 Currency Recognition</button>
+          <button class="tool-btn" onclick="selectTool('text', this)">📖 Smart Text Reader</button>
+          <button class="tool-btn" onclick="selectTool('shopping', this)">🛒 Shopping Assistant</button>
+          <button class="tool-btn" onclick="selectTool('object', this)">🔍 Object Detection</button>
+        </div>
+        <div class="blind-active-tool" id="blind-active-tool" style="display:none">
+          <span class="bat-dot"></span>
+          <span id="bat-name">Medicine Reader</span> ready
+        </div>
+        <div class="blind-result" id="blind-result" style="display:none">
+          <div class="blind-result-label" id="blind-result-label">Result</div>
+          <div class="blind-result-text" id="blind-result-text"></div>
+          <button class="blind-speak-btn" onclick="speakResult()">🔊 Speak result</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER — always visible -->
+<footer id="footer" style="display:none">
+  <div class="foot-inner">
+    <div class="foot-logo">✋ AccessBridge</div>
+    <p>Enhancing Accessibility using Sign Language Recognition with ML &amp; DL</p>
+    <p class="foot-sub">B.Tech · Academic Project</p>
+    <div class="foot-tech">
+      <span>Python</span><span>OpenCV</span><span>MediaPipe</span><span>TensorFlow</span><span>Flask</span><span>pyttsx3</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+// ── SPARKLES ──
+const wrap = document.getElementById('bubbles');
+const sparkleCoords = [
+  {left:10,top:12,size:10,delay:0},{left:18,top:30,size:8,delay:0.6},
+  {left:22,top:54,size:7,delay:1.2},{left:62,top:22,size:9,delay:0.4},
+  {left:88,top:10,size:12,delay:0.2},{left:92,top:44,size:8,delay:1.0},
+  {left:80,top:68,size:7,delay:0.8},{left:14,top:6,size:6,delay:1.6},
+  {left:94,top:82,size:6,delay:1.1}
+];
+sparkleCoords.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'sparkle';
+  el.textContent = '✦';
+  el.style.cssText = `left:${s.left}%;top:${s.top}%;font-size:${s.size}px;animation-delay:${s.delay}s;`;
+  wrap.appendChild(el);
+});
+
+// ── TEAM ──
+const team = [
+  { name:"Member 1", role:"ML Engineer",        contrib:"CNN model & training",  color:"#7c3aed", bg:"rgba(124,58,237,0.1)"   },
+  { name:"Member 2", role:"Computer Vision",    contrib:"MediaPipe integration", color:"#9b73e8", bg:"rgba(155,115,232,0.1)"  },
+  { name:"Member 3", role:"Backend Developer",  contrib:"Flask API & Python",    color:"#e879f9", bg:"rgba(232,121,249,0.1)"  },
+  { name:"Member 4", role:"Frontend Developer", contrib:"UI & website",          color:"#c4b5fd", bg:"rgba(196,181,253,0.15)" },
+];
+const teamGrid = document.getElementById("team-grid");
+team.forEach(m => {
+  const initials = m.name.split(" ").map(w => w[0]).join("");
+  const card = document.createElement("div");
+  card.className = "t-card";
+  card.innerHTML = `
+    <div class="t-avatar" style="background:${m.bg};color:${m.color}">${initials}</div>
+    <h3>${m.name}</h3>
+    <div class="t-role">${m.role}</div>
+    <div class="t-contrib">${m.contrib}</div>
+  `;
+  teamGrid.appendChild(card);
+});
+
+// ── BLIND ASSISTANCE ──
+let activeTool = null;
+let BLIND_API = API;
+const toolNames = {
+  medicine:"💊 Medicine Reader", color:"🎨 Color Detector",
+  currency:"💸 Currency Recognition", text:"📖 Smart Text Reader",
+  shopping:"🛒 Shopping Assistant", object:"🔍 Object Detection",
+};
+function getBlindRoute(tool) {
+  const routes = {
+    medicine:`${BLIND_API}/blind/medicine`,
+    color:`${BLIND_API}/blind/color`,
+    currency:`${BLIND_API}/blind/currency`,
+    text:`${BLIND_API}/blind/read`,
+    shopping:`${BLIND_API}/blind/shopping`,
+    object:`${BLIND_API}/blind/objects`,
+  };
+  return routes[tool];
+}
+function selectTool(tool, btn) {
+  activeTool = tool;
+  document.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("bat-name").textContent = toolNames[tool];
+  document.getElementById("blind-active-tool").style.display = "flex";
+  runBlindTool(tool);
+}
+async function runBlindTool(tool) {
+  showBlindResult("⏳ Capturing and analysing...", tool);
+  const liveImg = document.getElementById("blind-video");
+  if (liveImg) {
+    liveImg.src = `${BLIND_API}/video_feed`;
+    liveImg.style.display = "block";
+    document.getElementById("blind-cam-ph").style.display = "none";
+    document.getElementById("blind-live-badge").style.display = "flex";
+    document.getElementById("blind-cam-hint").style.display = "block";
+  }
+  try {
+    const res  = await fetch(getBlindRoute(tool));
+    const data = await res.json();
+    if (data.ok) {
+      let resultText = "";
+      const d = data.data;
+      if (tool === "medicine" || tool === "text") { resultText = d.text || data.message; }
+      else if (tool === "color") { resultText = `Dominant color: ${d.color}`; }
+      else if (tool === "currency") { resultText = d.denomination ? `Denomination: ₹${d.denomination}\n\nDetected text: ${d.text}` : `Could not detect denomination.\nText found: ${d.text}`; }
+      else if (tool === "object") { resultText = d.detected && d.detected.length ? `Objects detected: ${d.detected.join(", ")}` : "No common objects detected."; }
+      else if (tool === "shopping") {
+        const parts = [];
+        if (d.products && d.products.length) parts.push(`Products: ${d.products.join(", ")}`);
+        if (d.prices   && d.prices.length)   parts.push(`Prices: ${d.prices.join(", ")}`);
+        if (d.text)                           parts.push(`Label: ${d.text}`);
+        resultText = parts.join("\n\n") || data.message;
+      }
+      showBlindResult(resultText || data.message, tool);
+    } else { showBlindResult("⚠️ " + data.message, tool); }
+  } catch (e) { showBlindResult("❌ Backend offline — run: python app.py", tool); }
+}
+function captureAndAnalyse() { if (activeTool) runBlindTool(activeTool); }
+function showBlindResult(text, tool) {
+  const el = document.getElementById("blind-result");
+  document.getElementById("blind-result-label").textContent = toolNames[tool] || "Result";
+  document.getElementById("blind-result-text").textContent  = text;
+  el.style.display = "block";
+}
+function speakResult() {
+  const text = document.getElementById("blind-result-text").textContent;
+  if (text && !text.startsWith("⏳")) speak(text);
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.88; utt.pitch = 1;
+  window.speechSynthesis.speak(utt);
+}
+
+// ── DRAWER ──
+function toggleMenuDrawer() {
+  const drawer  = document.getElementById("menu-drawer");
+  const overlay = document.getElementById("menu-drawer-overlay");
+  const btn     = document.getElementById("three-dots-btn");
+  const open    = drawer.classList.toggle("open");
+  overlay.classList.toggle("show", open);
+  btn.classList.toggle("active", open);
+  document.body.style.overflow = open ? "hidden" : "";
+}
+function closeMenuDrawer() {
+  document.getElementById("menu-drawer").classList.remove("open");
+  document.getElementById("menu-drawer-overlay").classList.remove("show");
+  document.getElementById("three-dots-btn").classList.remove("active");
+  document.body.style.overflow = "";
+}
+function openHelp()     { document.getElementById("help-modal").style.display     = "flex"; }
+function openSettings() { document.getElementById("settings-modal").style.display = "flex"; }
+function openAuth()     { document.getElementById("auth-modal").style.display     = "flex"; switchAuthView("login"); }
+function scrollToHero() { document.getElementById("hero").scrollIntoView({ behavior:"smooth" }); }
+function smoothScroll(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+// ── DARK MODE ──
+function toggleDark() {
+  const isDark = document.body.classList.toggle("dark");
+  document.getElementById("dm-icon").textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("sb-dark", isDark ? "1" : "");
+}
+(function () {
+  if (localStorage.getItem("sb-dark")) {
+    document.body.classList.add("dark");
+    const icon = document.getElementById("dm-icon");
+    if (icon) icon.textContent = "☀️";
+  }
+})();
+</script>
+</body>
+</html>

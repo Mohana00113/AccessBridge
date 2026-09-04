@@ -1,0 +1,15 @@
+opencv-python
+mediapipe
+tensorflow
+numpy
+flask
+flask-cors
+pyttsx3
+scikit-learn
+matplotlib
+SpeechRecognition
+pyaudio
+easyocr
+ultralytics
+torch
+pillow

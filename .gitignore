@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+.env
+node_modules/
+
+backend/data/
+backend/model/*.h5
+backend/model/*.keras
+backend/model/*.pkl
+backend/model/*.png
+
+backend/tests/auto_search/
+backend/tests/exposure_runs/
+backend/tests/camera_samples/
